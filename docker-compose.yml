@@ -1,0 +1,46 @@
+# Use this file to pull GenieACS from DockerHub #
+version: "3"
+services:
+    database:
+        build:
+          context: .
+          dockerfile: ./db/Dockerfile
+        restart: always
+        container_name: "mongo-genieacs"
+        env_file:
+          - ./env/.env_mongo
+        volumes:
+            - data_db:/data/db
+            - data_configdb:/data/configdb
+        ports:
+            - "27017:27017"
+        networks:
+            - genieacs_network
+
+    genieacs:
+        build:
+          context: .
+          dockerfile: ./genieacs/Dockerfile
+        restart: always
+        container_name: "genieacs"
+        env_file:
+          - ./env/.env_genieacs
+        volumes:
+            - opt_volume:/opt
+        ports:
+            - "7547:7547"
+            - "7557:7557"
+            - "7567:7567"
+            - "3000:3000"
+        networks:
+            - genieacs_network
+        depends_on:
+            - 'database'
+
+volumes:
+    data_db:
+    data_configdb:
+    opt_volume:
+
+networks:
+    genieacs_network:

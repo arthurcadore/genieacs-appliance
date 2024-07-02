@@ -1,0 +1,1 @@
+FROM drumsergio/genieacs:1.2.13
